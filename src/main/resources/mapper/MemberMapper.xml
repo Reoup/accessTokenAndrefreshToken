@@ -3,7 +3,7 @@
 <!--BoardMapper 경로 정확하게 설정해야 함 -->
 <mapper namespace="com.example.demo.mapper.MemberMapper">
 
-    <select id="loginCheck" resultType="com.example.demo.dto.MemberDTO">
+    <select id="loginCheck" resultType="com.example.demo.dto.LoginDTO">
         SELECT *
         FROM user
         where user_id = #{user_id} and user_pwd = ${user_pwd}

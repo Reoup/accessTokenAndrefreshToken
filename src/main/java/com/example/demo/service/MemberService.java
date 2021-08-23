@@ -3,13 +3,17 @@ package com.example.demo.service;
 import com.example.demo.domain.Member;
 import com.example.demo.domain.MemberForm;
 import com.example.demo.domain.MemberRole;
-import com.example.demo.dto.MemberDTO;
-import com.example.demo.mapper.MemberMapper;
+import com.example.demo.dto.RefreshTokenDTO;
+import com.example.demo.dto.response.LoginResponse;
+import com.example.demo.exception.InvalidRefreshTokenException;
+import com.example.demo.exception.RefreshTokenException;
 import com.example.demo.repository.MemberRepository;
 import com.example.demo.security.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -20,6 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -76,7 +81,52 @@ public class MemberService implements UserDetailsService {
      */
     @Transactional
     public void findMemberAndSaveRefreshToken(String username, String refreshToken) {
+<<<<<<< HEAD
         Member member = memberRepository.find
     }
 
+=======
+        Member member = memberRepository.findMemberByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username + " 아이디가 일치하지 않습니다."));
+        member.updateRefreshToken(refreshToken);
+    }
+
+    /**
+     * refreshToken 으로 accessToken 재발급
+     * @Param refreshTokenDTO accessToken 재발급 요청 DTO
+     * @return json response
+     */
+    @Transactional
+    public LoginResponse refreshToken(RefreshTokenDTO refreshTokenDTO) {
+        if(!refreshTokenDTO.getGrantType().equals("refreshToken"))
+            throw new RefreshTokenException("올바른 grantType 을 입력해주세요");
+
+        Authentication authentication = jwtProvider.getAuthentication(refreshTokenDTO.getRefreshToken());
+
+        Member member = memberRepository.findMemberByUsernameAndRefreshToken(authentication.getName(), refreshTokenDTO.getRefreshToken())
+                .orElseThrow(() -> new InvalidRefreshTokenException("유효하지 않은 리프레시 토큰입니다."));
+        //TODO InvalidRefreshTokenException 예외 Handler
+
+        //jwt accessToken & refreshToken 발급
+        String accessToken = jwtProvider.generateToken(authentication, false);
+        String refreshToken = jwtProvider.generateToken(authentication, true);
+
+        //refreshToken 저장 (refreshToken 은 한번 사용 후 폐기)
+        member.updateRefreshToken(refreshToken);
+
+        LoginResponse response = LoginResponse.builder()
+                .status(HttpStatus.OK.value())
+                .message("accessToken 재발급 성공")
+                .accessToken(accessToken)
+                .expiredAt(LocalDateTime.now().plusSeconds(jwtProvider.getAccessTokenValidMilliSeconds()/1000))
+                .refreshToken(refreshToken)
+                .issuedAt(LocalDateTime.now())
+                .build();
+        return response;
+
+
+    }
+
+
+>>>>>>> 6a406cf5e787a6a3657e443c10ba0c620c6c7c27
 }

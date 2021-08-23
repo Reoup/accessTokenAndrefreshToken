@@ -69,4 +69,14 @@ public class MemberService implements UserDetailsService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * 회원에게 refreshToken 저장
+     * @Param username 요청 아이디
+     * @Param refreshToken refreshToken 값
+     */
+    @Transactional
+    public void findMemberAndSaveRefreshToken(String username, String refreshToken) {
+        Member member = memberRepository.find
+    }
+
 }

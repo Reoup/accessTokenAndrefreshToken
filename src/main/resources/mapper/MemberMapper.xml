@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--BoardMapper 경로 정확하게 설정해야 함 -->
+<mapper namespace="com.example.demo.mapper.MemberMapper">
+
+    <select id="loginCheck" resultType="com.example.demo.dto.MemberDTO">
+        SELECT *
+        FROM user
+        where user_id = #{user_id} and user_pwd = ${user_pwd}
+    </select>
+</mapper>

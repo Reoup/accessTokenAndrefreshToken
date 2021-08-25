@@ -10,14 +10,13 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.PostMapping;
 
+import javax.annotation.PostConstruct;
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
-
 
 @Component
 @Getter
@@ -28,9 +27,9 @@ public class JwtProvider {
     private final long refreshTokenValidMilliSeconds;
     private Key key;
 
-    public JwtProvider(@org.springframework.beans.factory.annotation.Value("${jwt.secretKey}") String secretKey,
-                       @org.springframework.beans.factory.annotation.Value("${jwt.accessToken-valid-seconds}")long accessTokenValidSeconds,
-                       @Value("${jwt.refreshToken-valid-seconds}")long refreshTokenValidSeconds) {
+    public JwtProvider(@Value("${JWT.secretkey}") String secretKey,
+                       @Value("${JWT.accessToken-valid-seconds}")long accessTokenValidSeconds,
+                       @Value("${JWT.refreshToken-valid-seconds}")long refreshTokenValidSeconds) {
         this.secretKey = secretKey;
         this.accessTokenValidMilliSeconds = accessTokenValidSeconds * 1000;
         this.refreshTokenValidMilliSeconds = refreshTokenValidSeconds * 1000;
@@ -39,15 +38,15 @@ public class JwtProvider {
     /**
      * secreyKey 암호화 초기화
      */
-    @PostMapping
+    @PostConstruct
     protected void init() {
         this.key = Keys.hmacShaKeyFor(this.secretKey.getBytes());
     }
 
     /**
      * jwt 생성
-     * @Param authentication UserDetailsService 에서 인증 성공된 User의 값들이 담긴 객체
-     * @Param isRefreshToken accessToken refreshToken 구분
+     * @param authentication UserDetailsService 에서 인증 성공된 User의 값들이 담긴 객체
+     * @param isRefreshToken accessToken refreshToken 구분
      * @return 생성된 토큰
      */
     public String generateToken(Authentication authentication, boolean isRefreshToken) {

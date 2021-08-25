@@ -26,7 +26,7 @@ import java.io.IOException;
 
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
-    public static final String AUTHORIZATION_HEADER = "Authorization";
+    public static final String AUTHORIZATION_HEADER = "AUTHORIZATION_HEADER";
 
     private final Logger log = LoggerFactory.getLogger(JwtFilter.class);
     private final JwtProvider jwtProvider;
@@ -34,6 +34,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        System.out.println(request.getHeader(AUTHORIZATION_HEADER));
         try {
             String token = resolveToken(request);
             log.info(token + "추출 완료");
@@ -65,7 +66,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
     /**
      * 헤더 token 추출
-     * @Param request HttpServletRequest
+     * @param request HttpServletRequest
      * @return 헤더 토큰 추출 값
      */
     private String resolveToken(HttpServletRequest request) {

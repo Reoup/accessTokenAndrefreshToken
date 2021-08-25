@@ -4,7 +4,6 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -42,4 +41,3 @@ public class Member {
         this.refreshToken = refreshToken;
     }
 }
-

@@ -29,7 +29,6 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-
 @Service
 @RequiredArgsConstructor
 public class MemberService implements UserDetailsService {
@@ -41,7 +40,7 @@ public class MemberService implements UserDetailsService {
 
     /**
      * 회원 가입
-     * @Param form 회원가입 form
+     * @param form 회원가입 form
      */
     @Transactional
     public void signUp(MemberForm form) {
@@ -51,11 +50,13 @@ public class MemberService implements UserDetailsService {
                 .name(form.getName())
                 .roles(Set.of(MemberRole.USER, MemberRole.ADMIN))
                 .build();
+
+        memberRepository.save(member);
     }
 
     /**
      * 로그인 요청 회원 찾기
-     * @Param username 요청 아이디
+     * @param username 요청 아이디
      * @return 회원 정보 넣은 security User 객체
      * @throws UsernameNotFoundException
      */
@@ -76,16 +77,11 @@ public class MemberService implements UserDetailsService {
 
     /**
      * 회원에게 refreshToken 저장
-     * @Param username 요청 아이디
-     * @Param refreshToken refreshToken 값
+     * @param username 요청 아이디
+     * @param refreshToken refreshToken 값
      */
     @Transactional
     public void findMemberAndSaveRefreshToken(String username, String refreshToken) {
-<<<<<<< HEAD
-        Member member = memberRepository.find
-    }
-
-=======
         Member member = memberRepository.findMemberByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username + " 아이디가 일치하지 않습니다."));
         member.updateRefreshToken(refreshToken);
@@ -93,7 +89,7 @@ public class MemberService implements UserDetailsService {
 
     /**
      * refreshToken 으로 accessToken 재발급
-     * @Param refreshTokenDTO accessToken 재발급 요청 DTO
+     * @param refreshTokenDTO accessToken 재발급 요청 DTO
      * @return json response
      */
     @Transactional
@@ -123,10 +119,5 @@ public class MemberService implements UserDetailsService {
                 .issuedAt(LocalDateTime.now())
                 .build();
         return response;
-
-
     }
-
-
->>>>>>> 6a406cf5e787a6a3657e443c10ba0c620c6c7c27
 }

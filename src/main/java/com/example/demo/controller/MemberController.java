@@ -24,6 +24,7 @@ import java.time.LocalDateTime;
 
 @Controller
 @RequiredArgsConstructor
+@CrossOrigin(value = "*", maxAge = 3600)
 @RequestMapping("/api")
 public class MemberController {
 
@@ -35,12 +36,12 @@ public class MemberController {
 
     /**
      * 회원 가입
-     * @Param form 회원가입 form
+     * @param form 회원가입 form
      * @return json response
      */
     @PostMapping("/members")
     @ResponseStatus(HttpStatus.CREATED)
-    public Response signUp(MemberForm form) {
+    public Response signUp(@RequestBody MemberForm form) {
         memberService.signUp(form);
 
         return Response.builder()
@@ -50,13 +51,14 @@ public class MemberController {
 
     /**
      * 로그인
-     * @Param loginDTO 로그인 요청 dto
+     * @param loginDTO 로그인 요청 dto
      * @return json response
      */
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody LoginDTO loginDTO) {
+
         UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(loginDTO.getUser_id(), loginDTO.getUser_pwd());
+                new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword());
 
         //아이디 체크는 Authentication에 사용자 입력 아이디, 비밀번호를 입력해야됨
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
@@ -82,7 +84,7 @@ public class MemberController {
 
     /**
      * refreshToken으로 accessToken 재발급
-     * @Param refreshTokenDTO accessToken 재발급 요청 DTO
+     * @param refreshTokenDTO accessToken 재발급 요청 DTO
      * @return json response
      */
     @PostMapping("/refreshToken")
